@@ -24,8 +24,11 @@ public class HelloApplication extends Application {
 
     private GridPane headerBar(){
         GridPane gridPane = new GridPane();
+        gridPane.setMinSize(bodyPane.getMinWidth(),headerBar-10);
         gridPane.setVgap(5);
         gridPane.setHgap(5);
+        //  gridPane.setStyle("-fx-background-colour: #C0C0C0");
+        gridPane.setAlignment(Pos.CENTER); // to center
 
         TextField searchText = new TextField();
         Button searchButton = new Button("Search");
@@ -42,13 +45,12 @@ public class HelloApplication extends Application {
         gridPane.setVgap(5);
         gridPane.setHgap(5);
       //  gridPane.setStyle("-fx-background-colour: #C0C0C0");
-
         gridPane.setAlignment(Pos.CENTER); // to center
 
 
         Label emailLabel = new Label("Email");
         Label passwordLabel = new Label("Password");
-        Label messageLabel = new Label();
+        Label messageLabel = new Label("I am Message");
 
         TextField emailTextField = new TextField();
         PasswordField passwordField = new PasswordField();
@@ -59,7 +61,7 @@ public class HelloApplication extends Application {
             public void handle(ActionEvent actionEvent) {
                 String email = emailTextField.getText();
                 String password = passwordField.getText();
-                messageLabel.setText(email);
+                messageLabel.setText(email+" ** "+password);
             }
         });
 
