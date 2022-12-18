@@ -8,10 +8,18 @@ import java.sql.*;
 
 
 public class DatabaseConnection {
-    private static final String databaseurl = "jdbc:mysql://localhost:3360/supply_chain";
+    private static final String databaseurl = "jdbc:mysql://localhost:3306/supply_chain"; // jdbc connector
     private static final String userName = "root";
     private static final String password = "epicC@der2022";
 
+    //class -- statement , connection , drivermanager
+
+    //drivermanager --> helps to intercat with different drivers
+    //takes the driver and make the connection first to database
+
+    //connection-->it has an object which is connected to database--> do different things
+
+    //statement --> from connection to satement to execute the queries
     public Statement getStatement(){
         Statement statement = null;
         Connection conn;
@@ -24,6 +32,7 @@ public class DatabaseConnection {
         return statement;
     }
 
+    //return table
     public ResultSet getQueryTable(String query){
         Statement statement = getStatement();
         try{
@@ -36,7 +45,7 @@ public class DatabaseConnection {
 
     public static void main(String[] args){
         DatabaseConnection databaseConnection = new DatabaseConnection();
-        ResultSet rs = databaseConnection.getQueryTable("SELECT email,first_name FROM CUSTOMER");
+        ResultSet rs = databaseConnection.getQueryTable("SELECT email,first_name FROM customer");
         try{
             while(rs.next()){
                 System.out.println(rs.getString("email")+ " " + rs.getString("first_name"));
