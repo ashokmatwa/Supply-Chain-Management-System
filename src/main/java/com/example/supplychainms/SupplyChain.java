@@ -20,6 +20,14 @@ public class SupplyChain extends Application {
     public static final int width = 700, height = 600, headerBar = 50;
 
     Pane bodyPane = new Pane();
+//    public static int bodyWidth, bodyHeight;
+
+    Login login = new Login(); // login functionality creating login object
+    ProductDetails productDetails = new ProductDetails();
+
+    Button globalLoginButton;
+    Label customerEmailLabel = null;
+    String customerEmail = null;
 
     private GridPane headerBar(){
         GridPane gridPane = new GridPane();
@@ -33,9 +41,35 @@ public class SupplyChain extends Application {
 
         TextField searchText = new TextField();
         Button searchButton = new Button("Search");
+        searchButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                String productName = searchText.getText();
+                productDetails.getProductsByName(productName);
+                //clear body and put this new pane in the body
+                bodyPane.getChildren().clear();
+                bodyPane.getChildren().add(productDetails.getProductsByName(productName));
+            }
+        });
+
+        globalLoginButton = new Button("Log In");
+        globalLoginButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                bodyPane.getChildren().clear();
+                bodyPane.getChildren().add(loginPage());
+//                globalLoginButton.setDisable(true);
+//                customerEmailLabel.setText("Welcome : "+ customerEmail);
+            }
+        });
+
+        customerEmailLabel = new Label("Welcome");
+
 
         gridPane.add(searchText,0,0);
         gridPane.add(searchButton,1,0);
+        gridPane.add(globalLoginButton,2,0);
+        gridPane.add(customerEmailLabel,3,0);
 
         return gridPane;
     }
@@ -63,7 +97,20 @@ public class SupplyChain extends Application {
             public void handle(ActionEvent actionEvent) {
                 String email = emailTextField.getText();
                 String password = passwordField.getText();
-                messageLabel.setText(email+" ** "+password);
+//                messageLabel.setText(email+" ** "+password);
+//      login functionality
+                if(login.customerLogin(email, password)){
+                    messageLabel.setText("Login Successful");
+                    customerEmail = email;
+                    globalLoginButton.setDisable(true);
+                    customerEmailLabel.setText("Welcome : "+ customerEmail);
+                    bodyPane.getChildren().clear();
+                    bodyPane.getChildren().add(productDetails.getAllProducts());
+                }
+                else{
+                    messageLabel.setText("Login failed");
+
+                }
             }
         });
 
@@ -78,19 +125,59 @@ public class SupplyChain extends Application {
         return gridPane;
     }
 
+    private GridPane footerBar(){
+        GridPane gridPane = new GridPane();
+        gridPane.setMinSize(bodyPane.getMinWidth(),headerBar-10);
+        gridPane.setVgap(5);
+        gridPane.setHgap(20);
+        //  gridPane.setStyle("-fx-background-colour: #C0C0C0");
+//        gridPane.setStyle("-fx-background-color: #C0C0C0");
+
+        gridPane.setAlignment(Pos.CENTER); // to center
+        gridPane.setTranslateY(headerBar+height+5);
+
+        Button addToCartButton = new Button("Add to Cart");
+        Button buyNowButton = new Button("Buy Now");
+
+        Label messageLabel = new Label(" ");
+        buyNowButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Product selectedProduct = productDetails.getSelectedProduct();
+                if(Order.placeOrder(customerEmail, selectedProduct)){
+                    messageLabel.setText("Order Placed");
+                }
+                else{
+                    messageLabel.setText("Order Failed");
+                }
+            }
+        });
+
+
+       // customerEmailLabel = new Label("Welcome");
+
+
+        gridPane.add(addToCartButton,0,0);
+        gridPane.add(buyNowButton,1,0);
+        gridPane.add(messageLabel,2 ,0);
+
+        return gridPane;
+    }
+
     private Pane createContent(){
         Pane root = new Pane();
 
-        root.setPrefSize(width,height+headerBar);
+        root.setPrefSize(width,height+2*headerBar);
 
         bodyPane.setMinSize(width,height);
         bodyPane.setTranslateY(headerBar);
 
     //    bodyPane.setAlignment(Pos.CENTER); // to center
 
-        bodyPane.getChildren().addAll(loginPage()); //add loginpage to body
+       // bodyPane.getChildren().addAll(loginPage()); //add loginpage to body
+        bodyPane.getChildren().addAll(productDetails.getAllProducts());
 
-        root.getChildren().addAll(headerBar(),bodyPane); //add body to root
+        root.getChildren().addAll(headerBar(),bodyPane, footerBar()); //add body to root
         return root;
     }
     @Override
