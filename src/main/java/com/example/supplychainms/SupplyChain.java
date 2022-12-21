@@ -76,6 +76,7 @@ public class SupplyChain extends Application {
 
     private GridPane loginPage(){
         GridPane gridPane = new GridPane();
+        //set the size of gridpane equal to bodypane
         gridPane.setMinSize(bodyPane.getMinWidth(),bodyPane.getMinHeight());
         gridPane.setVgap(5);
         gridPane.setHgap(5);
