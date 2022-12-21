@@ -34,7 +34,7 @@ public class Login {
             String query = String.format("SELECT * FROM CUSTOMER WHERE EMAIL = '%s' AND password = '%s'", email, password);
             try{
                 DatabaseConnection dbCon = new DatabaseConnection();
-                ResultSet rs = dbCon.getQueryTable(query);
+                ResultSet rs = dbCon.getQueryTable(query);   //store in result set
                 if(rs != null && rs.next()){
                     return true;
                 }
@@ -50,8 +50,8 @@ public class Login {
 //    }
 
     public static void main(String[] args) {
-        Login login = new Login();
-        System.out.println(login.getEncryptedPassword("1234"));
+        Login login = new Login(); // object of class login
+        System.out.println(login.getEncryptedPassword("1234"));  // calling function through login object
     }
 
 

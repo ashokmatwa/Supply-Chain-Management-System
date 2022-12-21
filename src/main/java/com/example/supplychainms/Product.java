@@ -13,6 +13,7 @@ public class Product {
     private SimpleStringProperty name;
     private SimpleDoubleProperty price;
 
+ //getter functions
     public int getId() {
         return id.get();
     }
@@ -25,12 +26,15 @@ public class Product {
         return price.get();
     }
 
+//constructor
     public Product(int id, String name, double price) {
 
         this.id = new SimpleIntegerProperty(id);
         this.name = new SimpleStringProperty(name);
         this.price = new SimpleDoubleProperty(price);
     }
+
+
 //  to fetch data
  // database connection
  //obsevable list

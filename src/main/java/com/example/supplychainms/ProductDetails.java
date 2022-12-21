@@ -17,6 +17,7 @@ public class ProductDetails {
     public TableView<Product> productTable;
 
     public Pane getAllProducts(){
+        // column names
         TableColumn id = new TableColumn("Id");
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
 

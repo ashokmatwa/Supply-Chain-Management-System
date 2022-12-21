@@ -22,7 +22,7 @@ public class SupplyChain extends Application {
     Pane bodyPane = new Pane();
 //    public static int bodyWidth, bodyHeight;
 
-    Login login = new Login(); // login functionality creating login object
+    Login login = new Login(); // login functionality creating login object to call function --> customerLogin present in Login class
     ProductDetails productDetails = new ProductDetails();
 
     Button globalLoginButton;
