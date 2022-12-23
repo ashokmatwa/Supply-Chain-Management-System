@@ -43,7 +43,8 @@ public class DatabaseConnection {
         return null;
     }
 
-    public int  executeUpdateQuery(String query){
+//copied from just above --> change return type and name
+    public int  executeUpdateQuery(String query){  // help in execute uodate and insert queries to database --> called from order class
         Statement statement = getStatement();
         try{
             return  statement.executeUpdate(query);

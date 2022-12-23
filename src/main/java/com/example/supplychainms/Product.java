@@ -37,14 +37,14 @@ public class Product {
 
 //  to fetch data
  // database connection
- //obsevable list
+ //observable list
  // query
-    public static ObservableList<Product> getAllProducts(){
-        DatabaseConnection databaseConnection = new DatabaseConnection();
-        ObservableList<Product> productList = FXCollections.observableArrayList();
-        String selectProducts = "SELECT * FROM PRODUCT"; // query
+    public static ObservableList<Product> getAllProducts(){ //called in product details class
+        DatabaseConnection databaseConnection = new DatabaseConnection();              // database connection
+        ObservableList<Product> productList = FXCollections.observableArrayList();     //observable list
+        String selectProducts = "SELECT * FROM PRODUCT";                             // query
         try{
-            ResultSet rs = databaseConnection.getQueryTable(selectProducts); // fetch all the data from the database
+            ResultSet rs = databaseConnection.getQueryTable(selectProducts);    // fetch all the data from the database
             while(rs.next()){
                 productList.add(
                         new Product(
@@ -59,6 +59,8 @@ public class Product {
         return productList;
     }
 
+ // copied from just above --> query changes
+ // search item in searchfield and get the item on table
     public static ObservableList<Product> getProductsByName(String productName){
         DatabaseConnection databaseConnection = new DatabaseConnection();
         ObservableList<Product> productList = FXCollections.observableArrayList();

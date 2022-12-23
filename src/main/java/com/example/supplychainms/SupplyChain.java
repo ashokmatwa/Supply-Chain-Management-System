@@ -45,20 +45,20 @@ public class SupplyChain extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 String productName = searchText.getText();
-                productDetails.getProductsByName(productName);
+                productDetails.getProductsByName(productName);  // calling a function from object of class ProductDetails
                 //clear body and put this new pane in the body
-                bodyPane.getChildren().clear();
+                bodyPane.getChildren().clear();  // to remove all from table view and only display what has searched
                 bodyPane.getChildren().add(productDetails.getProductsByName(productName));
             }
         });
 
         globalLoginButton = new Button("Log In");
-        globalLoginButton.setOnAction(new EventHandler<ActionEvent>() {
+        globalLoginButton.setOnAction(new EventHandler<ActionEvent>() { // on clicking to this button login page will be displayed
             @Override
             public void handle(ActionEvent actionEvent) {
-                bodyPane.getChildren().clear();
-                bodyPane.getChildren().add(loginPage());
-//                globalLoginButton.setDisable(true);
+                bodyPane.getChildren().clear();    // clear everything
+                bodyPane.getChildren().add(loginPage());  // here added loginpage to body pane
+//                globalLoginButton.setDisable(true);// -->transfer to login button setOnAction
 //                customerEmailLabel.setText("Welcome : "+ customerEmail);
             }
         });
@@ -100,17 +100,16 @@ public class SupplyChain extends Application {
                 String password = passwordField.getText();
 //                messageLabel.setText(email+" ** "+password);
 //      login functionality
-                if(login.customerLogin(email, password)){
+                if(login.customerLogin(email, password)){    // calling a function of login class passing two parameters
                     messageLabel.setText("Login Successful");
                     customerEmail = email;
                     globalLoginButton.setDisable(true);
                     customerEmailLabel.setText("Welcome : "+ customerEmail);
-                    bodyPane.getChildren().clear();
-                    bodyPane.getChildren().add(productDetails.getAllProducts());
+                    bodyPane.getChildren().clear();  // after login clear body
+                    bodyPane.getChildren().add(productDetails.getAllProducts());// and then add all products to body
                 }
                 else{
                     messageLabel.setText("Login failed");
-
                 }
             }
         });
@@ -126,6 +125,7 @@ public class SupplyChain extends Application {
         return gridPane;
     }
 
+// copy from headerBar
     private GridPane footerBar(){
         GridPane gridPane = new GridPane();
         gridPane.setMinSize(bodyPane.getMinWidth(),headerBar-10);
@@ -144,8 +144,8 @@ public class SupplyChain extends Application {
         buyNowButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Product selectedProduct = productDetails.getSelectedProduct();
-                if(Order.placeOrder(customerEmail, selectedProduct)){
+                Product selectedProduct = productDetails.getSelectedProduct();   //calling function class Product Details which is selected by user for buy
+                if(Order.placeOrder(customerEmail, selectedProduct)){  // calling function in order class
                     messageLabel.setText("Order Placed");
                 }
                 else{
