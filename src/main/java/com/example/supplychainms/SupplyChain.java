@@ -90,7 +90,7 @@ public class SupplyChain extends Application {
 
         customerEmailLabel = new Label("Welcome");
 
-//copy above loginbutton
+//copy above login-button
         globalSignUpButton=new Button("Sign Up");
         globalSignUpButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -145,6 +145,7 @@ public class SupplyChain extends Application {
             public void handle(ActionEvent actionEvent) {
                 if(firstNameTextField.getText().length()>=3 && emailTextField.getText().length()>=8 && phoneTextField.getText().length()==10) {
                     DatabaseConnection databaseConnection = new DatabaseConnection();
+                    //inserting into database data of new  consumer
                     String query = String.format("INSERT INTO customer (first_name, last_name, email, password, mobile, address) values('%s','%s','%s','%s','%s','%s')", firstNameTextField.getText(), lastNameTextField.getText(), emailTextField.getText(), passwordField.getText(), phoneTextField.getText(), addressTextField.getText());
 //                ResultSet rs = databaseConnection.getQueryTable(query);
                     int rowCount = 0;
@@ -157,11 +158,13 @@ public class SupplyChain extends Application {
                     if (rowCount > 0) {
                         customerEmail = emailTextField.getText();
                         customerEmailLabel.setText("Welcome " + firstNameTextField.getText());
-                        globalLoginButton.setVisible(false);
-                        globalSignUpButton.setVisible(false);
 
                         bodyPane.getChildren().clear();
                         bodyPane.getChildren().add(productDetails.getAllProducts());
+
+                        globalLoginButton.setVisible(false);
+                        globalSignUpButton.setVisible(false);
+
                         addToCartButton.setVisible(true);
                         buyNowButton.setVisible(true);
                         myCartButton.setVisible(true);
@@ -170,7 +173,7 @@ public class SupplyChain extends Application {
                         messageLabel.setText("Not able to create your account");
                     }
                 }else{
-                    messageLabel.setText("Enter credentials properly");
+                    messageLabel.setText("Enter credentials Properly");
                 }
             }
         });
@@ -228,9 +231,9 @@ public class SupplyChain extends Application {
 //      login functionality
                 if(login.customerLogin(email, password)){    // calling a function of login class passing two parameters
 
-                    //getting name from database through database connection
+                    //getting NAME from database through database connection
                     DatabaseConnection databaseConnection=new DatabaseConnection();
-                    String query=String.format("select first_name from customer where email = '%s'",email);
+                    String query = String.format("select first_name from customer where email = '%s'",email);
                     ResultSet rs = databaseConnection.getQueryTable(query);
                     try {
                         while(rs.next()) {
@@ -288,9 +291,12 @@ public class SupplyChain extends Application {
 
 //new button
         myCartButton=new Button("My Cart");
+        logoutButton = new Button("Logout");
 
         addToCartButton.setVisible(false);
         buyNowButton.setVisible(false);
+        myCartButton.setVisible(false);
+        logoutButton.setVisible(false);
 
         Label messageLabel = new Label(" ");
 
@@ -299,18 +305,18 @@ public class SupplyChain extends Application {
         addToCartButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Product selectedProduct=productDetails.getSelectedProduct();
+                Product selectedProduct = productDetails.getSelectedProduct();
                 cartList.add(selectedProduct);
                 messageLabel.setText("Added to Cart");
             }
         });
 
-        myCartButton.setVisible(false);
 //        after clicking on my cart --> it shows product added in cart
         myCartButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 bodyPane.getChildren().clear();
+
                 TableColumn id=new TableColumn("Id");
                 id.setCellValueFactory(new PropertyValueFactory<>("id"));
                 TableColumn name=new TableColumn("Name");
@@ -318,13 +324,14 @@ public class SupplyChain extends Application {
                 TableColumn price=new TableColumn("Price");
                 price.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-                cartTableView=new TableView<>();
+                cartTableView = new TableView<>();
+
                 cartTableView.setItems(cartList);
                 cartTableView.getColumns().addAll(id, name, price);
                 cartTableView.setMinSize(SupplyChain.width, SupplyChain.height);
                 cartTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-                Pane tablePane=new Pane();
+                Pane tablePane = new Pane();
                 tablePane.setMinSize(SupplyChain.width,SupplyChain.height);
                 tablePane.getChildren().add(cartTableView);
 
@@ -344,8 +351,6 @@ public class SupplyChain extends Application {
             }
         });
 
-        logoutButton = new Button("Logout");
-        logoutButton.setVisible(false);
         logoutButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -353,14 +358,16 @@ public class SupplyChain extends Application {
                 bodyPane.getChildren().addAll(productDetails.getAllProducts());
                 customerEmailLabel.setText("Logged Out");
                 //visible or not reset
-                customerEmail=null;
-                buyNowButton.setVisible(false);
+                customerEmail = null;
                 addToCartButton.setVisible(false);
+                buyNowButton.setVisible(false);
+                myCartButton.setVisible(false);
                 logoutButton.setVisible(false);
+                messageLabel.setVisible(false);
+
                 globalLoginButton.setVisible(true);
                 globalSignUpButton.setVisible(true);
-                myCartButton.setVisible(false);
-                messageLabel.setVisible(false);
+
             }
         });
 
@@ -372,7 +379,7 @@ public class SupplyChain extends Application {
         gridPane.add(buyNowButton,1,0);
         gridPane.add(messageLabel,2 ,0);
 
-        gridPane.add(myCartButton,4,0);
+//        gridPane.add(myCartButton,4,0);
         gridPane.add(logoutButton,5,0);
 
         return gridPane;
