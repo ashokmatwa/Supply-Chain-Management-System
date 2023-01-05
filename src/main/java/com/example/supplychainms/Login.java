@@ -29,7 +29,7 @@ public class Login {
         }
         return null;
     }
-        public boolean customerLogin(String email, String password){
+    public boolean customerLogin(String email, String password){
 
             String query = String.format("SELECT * FROM CUSTOMER WHERE EMAIL = '%s' AND password = '%s'", email, password);
             try{

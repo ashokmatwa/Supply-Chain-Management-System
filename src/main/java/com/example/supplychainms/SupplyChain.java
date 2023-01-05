@@ -185,7 +185,7 @@ public class SupplyChain extends Application {
     public void start(Stage stage) throws IOException {
      //   FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(createContent());
-        stage.setTitle("Hello!");
+        stage.setTitle("Sabki Dukaan!!");
         stage.setScene(scene);
         stage.show();
     }
