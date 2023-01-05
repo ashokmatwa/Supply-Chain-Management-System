@@ -35,7 +35,7 @@ public class SupplyChain extends Application {
 
     Button globalSignUpButton;
 
-    public TableView<Product> cartTable;
+    public TableView<Product> cartTableView;
     Button addToCartButton;
     Button buyNowButton;
     Button myCartButton;
@@ -113,6 +113,91 @@ public class SupplyChain extends Application {
 
     private GridPane signupPage(){
 
+        GridPane gridPane = new GridPane();
+        gridPane.setMinSize(bodyPane.getMinWidth(),bodyPane.getMinHeight());
+
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setVgap(5);
+        gridPane.setHgap(5);
+
+        Label firstName = new Label("First name:");
+        Label lastName = new Label("Last name:");
+        Label emailLabel = new Label("Email:");
+        Label addressLabel = new Label("Address:");
+        Label phoneLabel = new Label("Phone:");
+        Label passwordLabel = new Label("Password:");
+
+        TextField firstNameTextField = new TextField();
+       // firstNameTextField.setPromptText("Your first name");//firstN, phone,email
+        TextField lastNameTextField = new TextField();
+        TextField emailTextField = new TextField();
+        TextField addressTextField = new TextField();
+        TextField phoneTextField = new TextField();
+        PasswordField passwordField = new PasswordField();
+
+        addressTextField.setMinSize(100,60);
+
+        Button signUpButton = new Button("Signup");
+        Label messageLabel = new Label("Create your account.");
+
+        signUpButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(firstNameTextField.getText().length()>=3 && emailTextField.getText().length()>=8 && phoneTextField.getText().length()==10) {
+                    DatabaseConnection databaseConnection = new DatabaseConnection();
+                    String query = String.format("INSERT INTO customer (first_name, last_name, email, password, mobile, address) values('%s','%s','%s','%s','%s','%s')", firstNameTextField.getText(), lastNameTextField.getText(), emailTextField.getText(), passwordField.getText(), phoneTextField.getText(), addressTextField.getText());
+//                ResultSet rs = databaseConnection.getQueryTable(query);
+                    int rowCount = 0;
+                    try {
+                        rowCount = databaseConnection.executeUpdateQuery(query);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if (rowCount > 0) {
+                        customerEmail = emailTextField.getText();
+                        customerEmailLabel.setText("Welcome " + firstNameTextField.getText());
+                        globalLoginButton.setVisible(false);
+                        globalSignUpButton.setVisible(false);
+
+                        bodyPane.getChildren().clear();
+                        bodyPane.getChildren().add(productDetails.getAllProducts());
+                        addToCartButton.setVisible(true);
+                        buyNowButton.setVisible(true);
+                        myCartButton.setVisible(true);
+                        logoutButton.setVisible(true);
+                    } else if (rowCount == 0) {
+                        messageLabel.setText("Not able to create your account");
+                    }
+                }else{
+                    messageLabel.setText("Enter credentials properly");
+                }
+            }
+        });
+
+
+        gridPane.add(firstName,0,0);
+        gridPane.add(firstNameTextField,1,0);
+
+        gridPane.add(lastName,0,1);
+        gridPane.add(lastNameTextField,1,1);
+
+        gridPane.add(emailLabel,0,2);
+        gridPane.add(emailTextField,1,2);
+
+        gridPane.add(passwordLabel,0,3);
+        gridPane.add(passwordField,1,3);
+
+        gridPane.add(phoneLabel,0,4);
+        gridPane.add(phoneTextField,1,4);
+
+        gridPane.add(addressLabel,0,5);
+        gridPane.add(addressTextField,1,5);
+
+        gridPane.add(signUpButton,0,6);
+        gridPane.add(messageLabel,1,6);
+
+        return gridPane;
     }
     private GridPane loginPage(){
         GridPane gridPane = new GridPane();
@@ -202,7 +287,8 @@ public class SupplyChain extends Application {
         buyNowButton = new Button("Buy Now");
 
 //new button
-        myCartButton=new Button("My cart");
+        myCartButton=new Button("My Cart");
+
         addToCartButton.setVisible(false);
         buyNowButton.setVisible(false);
 
@@ -213,7 +299,36 @@ public class SupplyChain extends Application {
         addToCartButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                Product selectedProduct=productDetails.getSelectedProduct();
+                cartList.add(selectedProduct);
+                messageLabel.setText("Added to Cart");
+            }
+        });
 
+        myCartButton.setVisible(false);
+//        after clicking on my cart --> it shows product added in cart
+        myCartButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                bodyPane.getChildren().clear();
+                TableColumn id=new TableColumn("Id");
+                id.setCellValueFactory(new PropertyValueFactory<>("id"));
+                TableColumn name=new TableColumn("Name");
+                name.setCellValueFactory(new PropertyValueFactory<>("name"));
+                TableColumn price=new TableColumn("Price");
+                price.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+                cartTableView=new TableView<>();
+                cartTableView.setItems(cartList);
+                cartTableView.getColumns().addAll(id, name, price);
+                cartTableView.setMinSize(SupplyChain.width, SupplyChain.height);
+                cartTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+                Pane tablePane=new Pane();
+                tablePane.setMinSize(SupplyChain.width,SupplyChain.height);
+                tablePane.getChildren().add(cartTableView);
+
+                bodyPane.getChildren().addAll(tablePane);
             }
         });
         buyNowButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -229,6 +344,26 @@ public class SupplyChain extends Application {
             }
         });
 
+        logoutButton = new Button("Logout");
+        logoutButton.setVisible(false);
+        logoutButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                bodyPane.getChildren().clear();
+                bodyPane.getChildren().addAll(productDetails.getAllProducts());
+                customerEmailLabel.setText("Logged Out");
+                //visible or not reset
+                customerEmail=null;
+                buyNowButton.setVisible(false);
+                addToCartButton.setVisible(false);
+                logoutButton.setVisible(false);
+                globalLoginButton.setVisible(true);
+                globalSignUpButton.setVisible(true);
+                myCartButton.setVisible(false);
+                messageLabel.setVisible(false);
+            }
+        });
+
 
        // customerEmailLabel = new Label("Welcome");
 
@@ -236,6 +371,9 @@ public class SupplyChain extends Application {
         gridPane.add(addToCartButton,0,0);
         gridPane.add(buyNowButton,1,0);
         gridPane.add(messageLabel,2 ,0);
+
+        gridPane.add(myCartButton,4,0);
+        gridPane.add(logoutButton,5,0);
 
         return gridPane;
     }
