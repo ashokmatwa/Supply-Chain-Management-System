@@ -1,19 +1,23 @@
 package com.example.supplychainms;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.ResultSet;
 
 public class SupplyChain extends Application {
 
@@ -29,6 +33,15 @@ public class SupplyChain extends Application {
     Label customerEmailLabel = null;
     String customerEmail = null;
 
+    Button globalSignUpButton;
+
+    public TableView<Product> cartTable;
+    Button addToCartButton;
+    Button buyNowButton;
+    Button myCartButton;
+    Button logoutButton;
+    ObservableList<Product> cartList;
+
     private GridPane headerBar(){
         GridPane gridPane = new GridPane();
         gridPane.setMinSize(bodyPane.getMinWidth(),headerBar-10);
@@ -40,6 +53,18 @@ public class SupplyChain extends Application {
         gridPane.setAlignment(Pos.CENTER); // to center
 
         TextField searchText = new TextField();
+        // search by press enter instead of search button
+//        searchText.setOnKeyPressed(new EventHandler<KeyEvent>() {
+//            @Override
+//            public void handle(KeyEvent keyEvent) {
+//                if (keyEvent.getCode().equals(KeyCode.ENTER)) {
+//                    String productName=searchText.getText();
+//                    bodyPane.getChildren().clear();
+//                    bodyPane.getChildren().add(productDetails.getProductsByName(productName));
+//                }
+//            }
+//        });
+
         Button searchButton = new Button("Search");
         searchButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -65,15 +90,30 @@ public class SupplyChain extends Application {
 
         customerEmailLabel = new Label("Welcome");
 
+//copy above loginbutton
+        globalSignUpButton=new Button("Sign Up");
+        globalSignUpButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                bodyPane.getChildren().clear();
+                bodyPane.getChildren().add(signupPage());
+            }
+        });
+
 
         gridPane.add(searchText,0,0);
         gridPane.add(searchButton,1,0);
         gridPane.add(globalLoginButton,2,0);
         gridPane.add(customerEmailLabel,3,0);
 
+        gridPane.add(globalSignUpButton,4,0);
+
         return gridPane;
     }
 
+    private GridPane signupPage(){
+
+    }
     private GridPane loginPage(){
         GridPane gridPane = new GridPane();
         //set the size of gridpane equal to bodypane
@@ -87,7 +127,8 @@ public class SupplyChain extends Application {
 
         Label emailLabel = new Label("Email");
         Label passwordLabel = new Label("Password");
-        Label messageLabel = new Label("I am Message");
+       // Label messageLabel = new Label("I am Message");
+        Label messageLabel = new Label("Enter Credentials");
 
         TextField emailTextField = new TextField();
         PasswordField passwordField = new PasswordField();
@@ -101,12 +142,32 @@ public class SupplyChain extends Application {
 //                messageLabel.setText(email+" ** "+password);
 //      login functionality
                 if(login.customerLogin(email, password)){    // calling a function of login class passing two parameters
+
+                    //getting name from database through database connection
+                    DatabaseConnection databaseConnection=new DatabaseConnection();
+                    String query=String.format("select first_name from customer where email = '%s'",email);
+                    ResultSet rs = databaseConnection.getQueryTable(query);
+                    try {
+                        while(rs.next()) {
+                            customerEmailLabel.setText("Welcome " + rs.getString("first_name"));
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
                     messageLabel.setText("Login Successful");
                     customerEmail = email;
-                    globalLoginButton.setDisable(true);
-                    customerEmailLabel.setText("Welcome : "+ customerEmail);
+                    //globalLoginButton.setDisable(true);
+                    globalLoginButton.setVisible(false);
+                    globalSignUpButton.setVisible(false);
+                    //customerEmailLabel.setText("Welcome : "+ customerEmail);
                     bodyPane.getChildren().clear();  // after login clear body
                     bodyPane.getChildren().add(productDetails.getAllProducts());// and then add all products to body
+            // new button added
+                    addToCartButton.setVisible(true);
+                    buyNowButton.setVisible(true);
+                    myCartButton.setVisible(true);
+                    logoutButton.setVisible(true);
                 }
                 else{
                     messageLabel.setText("Login failed");
@@ -137,10 +198,24 @@ public class SupplyChain extends Application {
         gridPane.setAlignment(Pos.CENTER); // to center
         gridPane.setTranslateY(headerBar+height+5);
 
-        Button addToCartButton = new Button("Add to Cart");
-        Button buyNowButton = new Button("Buy Now");
+        addToCartButton = new Button("Add to Cart");
+        buyNowButton = new Button("Buy Now");
+
+//new button
+        myCartButton=new Button("My cart");
+        addToCartButton.setVisible(false);
+        buyNowButton.setVisible(false);
 
         Label messageLabel = new Label(" ");
+
+        cartList = FXCollections.observableArrayList();
+
+        addToCartButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+            }
+        });
         buyNowButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -188,9 +263,13 @@ public class SupplyChain extends Application {
         stage.setTitle("Sabki Dukaan!!");
         stage.setScene(scene);
         stage.show();
+//        stage.centerOnScreen();
+//        stage.setResizable(false);
     }
 
     public static void main(String[] args) {
         launch();
     }
 }
+
+
